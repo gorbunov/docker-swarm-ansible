@@ -1,0 +1,10 @@
+---
+- name: Init swarm mode
+  docker_swarm:
+    state: present
+    advertise_addr: "{{ advertise_addr }}"
+
+- name: Create docker ingress network
+  docker_network:
+    name: ingress
+    driver: overlay
