@@ -7,3 +7,9 @@
     roles:
       - common
       - swarm
+
+  - name: docker manager traefik
+    hosts: manager
+    remote_user: root
+    roles:
+      - traefik
