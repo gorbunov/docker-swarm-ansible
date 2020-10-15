@@ -22,10 +22,12 @@
       - docker-ce
       - python3-pip
 
-- name: Add docker SDK for controlling with ansible
+- name: Add docker reqs for controlling with ansible
   pip:
     name:
       - docker
+      - jsondiff
+      - pyyaml
 
 - name: add my user
   user:

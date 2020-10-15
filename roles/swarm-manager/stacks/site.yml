@@ -1,0 +1,28 @@
+---
+- name: copy traefik configuration
+  template:
+    src: traefik.toml.j2
+    dest: /srv/traefik.toml
+
+- name: Deploy core stack
+  docker_stack:
+    name: tradebot
+    with_registry_auth: true
+    resolve_image: never
+    compose:
+      - version: '3'
+        services:
+          traefik:
+            image: traefik:v2.3
+            command: --api.insecure=true --providers.docker
+            ports:
+              - 80:80
+              - 8080:8080
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+              - /srv/traefik.toml:/etc/traefik/traefik.toml
+            networks:
+              - traefiknet
+        networks:
+          traefiknet:
+            external: true

@@ -6,10 +6,12 @@
 
 - name: Create docker ingress network
   docker_network:
-    name: ingress
+    name: traefiknet
     driver: overlay
 
 - name: Login to dockerhub
   docker_login:
     username: "{{ dockerhub_username }}"
     password: "{{ dockerhub_password }}"
+
+- include_tasks: stacks/site.yml
