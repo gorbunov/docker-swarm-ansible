@@ -4,6 +4,12 @@
     src: traefik.toml.j2
     dest: /srv/traefik.toml
 
+- name: create acme dir storage
+  file:
+    path: /srv/acme
+    state: directory
+
+
 - name: Deploy core stack
   docker_stack:
     name: tradebot
@@ -24,7 +30,7 @@
             volumes:
               - /var/run/docker.sock:/var/run/docker.sock
               - /srv/traefik.toml:/etc/traefik/traefik.toml
-              - /srv/acme.json:/acme.json
+              - /srv/acme:/etc/traefik/acme
             networks:
               - traefiknet
         networks:
