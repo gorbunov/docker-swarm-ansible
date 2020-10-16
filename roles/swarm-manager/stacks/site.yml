@@ -37,6 +37,7 @@
               - "traefik.http.routers.traefik.rule=Host(`traefik.0d.kz`)"
               - "traefik.http.routers.traefik.entrypoints=websecure"
               - "traefik.http.routers.traefik.tls.certresolver=tlsresolver"
+              - "traefik.http.services.traefik.loadbalancer.server.port=8080"
             networks:
               - traefiknet
           whoami:
