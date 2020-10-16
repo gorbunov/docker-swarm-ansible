@@ -4,6 +4,14 @@ insecure = true
 [providers.docker]
 exposedByDefault = false
 
+[entryPoints]
+
+[entryPoints.web]
+address = ":80"
+
+[entryPoints.websecure]
+address = ":443"
+
 [certificatesResolvers.tlsresolver.acme]
 email = "{{ admin_email }}"
 caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
