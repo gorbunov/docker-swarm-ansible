@@ -16,8 +16,9 @@ address = ":443"
 
 [certificatesResolvers.tlsresolver.acme]
 email = "{{ admin_email }}"
-## caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
-caServer = "https://acme-v02.api.letsencrypt.org/directory"
+storage = "/etc/traefik/acme/acme.json"
+caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+# caServer = "https://acme-v02.api.letsencrypt.org/directory"
 
 [certificatesResolvers.tlsresolver.acme.dnsChallenge]
 provider = "digitalocean"
