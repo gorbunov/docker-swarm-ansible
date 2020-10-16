@@ -15,12 +15,16 @@
           traefik:
             image: traefik:v2.3
             command: --api.insecure=true --providers.docker
+            enviroment:
+              DO_AUTH_TOKEN: "{{ digitalocean_api_token }}"
             ports:
               - 80:80
+              - 443:443
               - 8080:8080
             volumes:
               - /var/run/docker.sock:/var/run/docker.sock
               - /srv/traefik.toml:/etc/traefik/traefik.toml
+              - /srv/acme.json:/acme.json
             networks:
               - traefiknet
         networks:
