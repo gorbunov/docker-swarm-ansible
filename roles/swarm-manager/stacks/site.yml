@@ -34,16 +34,33 @@
               - /srv/acme:/etc/traefik/acme
             networks:
               - traefiknet
+            deploy:
+              placement:
+                constraints:
+                  - "node.role==manager"
+              labels:
+                - "traefik.enable=true"
+                - "traefik.http.routers.dashboard.rule=Host(`traefik.0d.kz`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+                - "traefik.http.routers.dashboard.service=api@internal"
+                - "traefik.http.routers.dashboard.middlewares=auth"
+                - "traefik.http.routers.dashboard.entrypoints=websecure"
+                - "traefik.http.routers.dashboard.tls.certresolver=tlsresolver"
+                - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$MOMEjVtn$$.10ydpv.z80xNBRsmha9S0"
+                - "traefik.http.services.dummy-svc.loadbalancer.server.port=9999"
           whoami:
             image: traefik/whoami
             container_name: "whoami"
-            labels:
-              - "traefik.enable=true"
-              - "traefik.http.routers.whoami.rule=Host(`whoami.0d.kz`)"
-              - "traefik.http.routers.whoami.entrypoints=websecure"
-              - "traefik.http.routers.whoami.tls.certresolver=tlsresolver"
+            ports:
+              - 80:80
             networks:
               - traefiknet
+            deploy:
+              labels:
+                - "traefik.enable=true"
+                - "traefik.http.routers.whoami.rule=Host(`whoami.0d.kz`)"
+                - "traefik.http.routers.whoami.entrypoints=websecure"
+                - "traefik.http.routers.whoami.tls.certresolver=tlsresolver"
+                - "traefik.http.services.whoami.loadbalancer.server.port=80"
         networks:
           traefiknet:
             external: true
