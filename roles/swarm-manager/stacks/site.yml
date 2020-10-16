@@ -22,7 +22,6 @@
             container_name: "traefik"
             image: traefik:v2.3
             restart: unless-stopped
-            command: --api.insecure=true --providers.docker
             environment:
               DO_AUTH_TOKEN: "{{ digitalocean_api_token }}"
             ports:
