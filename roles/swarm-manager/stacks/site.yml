@@ -19,9 +19,7 @@
       - version: '3'
         services:
           traefik:
-            container_name: "traefik"
             image: traefik:v2.3
-            restart: unless-stopped
             environment:
               DO_AUTH_TOKEN: "{{ digitalocean_api_token }}"
             ports:
@@ -49,9 +47,6 @@
                 - "traefik.http.services.dummy-svc.loadbalancer.server.port=9999"
           whoami:
             image: traefik/whoami
-            container_name: "whoami"
-            ports:
-              - 80:80
             networks:
               - traefiknet
             deploy:
