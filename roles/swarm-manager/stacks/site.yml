@@ -33,6 +33,7 @@
               - /srv/traefik.toml:/etc/traefik/traefik.toml
               - /srv/acme:/etc/traefik/acme
             labels:
+              - "traefik.enable=true"
               - "traefik.http.routers.traefik.rule=Host(`traefik.0d.kz`)"
               - "traefik.http.routers.traefik.entrypoints=websecure"
               - "traefik.http.routers.traefik.tls.certresolver=tlsresolver"
