@@ -15,7 +15,7 @@
           traefik:
             image: traefik:v2.3
             command: --api.insecure=true --providers.docker
-            enviroment:
+            environment:
               DO_AUTH_TOKEN: "{{ digitalocean_api_token }}"
             ports:
               - 80:80
