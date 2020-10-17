@@ -3,8 +3,6 @@
   template:
     src: traefik.toml.j2
     dest: /srv/traefik.toml
-  notify:
-    - restart traefik
 
 - name: create acme dir storage
   file:
