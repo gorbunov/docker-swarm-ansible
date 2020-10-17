@@ -31,12 +31,12 @@
 
 - name: add my user
   user:
-    name: gorbunov
+    name: {{ add_public_keys_username }}
     groups:
       - sudo
 
 - name: add my authorized keys
   authorized_key:
-    user: gorbunov
-    key: https://github.com/gorbunov.keys
+    user: {{ add_public_keys_username }}
+    key: "https://github.com/{{ add_public_keys_username }}.keys"
 
