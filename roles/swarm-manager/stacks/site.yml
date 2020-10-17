@@ -9,10 +9,9 @@
     path: /srv/acme
     state: directory
 
-
 - name: Deploy core stack
   docker_stack:
-    name: "{{ stack_name }}"
+    name: "{{ base_stack_name }}"
     with_registry_auth: true
     resolve_image: never
     compose:
@@ -31,6 +30,7 @@
               - /srv/acme:/etc/traefik/acme
             networks:
               - traefiknet
+              - appnet
             deploy:
               placement:
                 constraints:
@@ -46,20 +46,20 @@
                 - "traefik.http.services.traefik-service.loadbalancer.server.port=9999"
                 - "traefik.http.routers.dashboard.tls.domains[0].main={{base_hostname}}"
                 - "traefik.http.routers.dashboard.tls.domains[0].sans=*.{{base_hostname}}"
-          whoami:
-            image: traefik/whoami
-            networks:
-              - traefiknet
-            deploy:
-              labels:
-                - "traefik.enable=true"
-                - "traefik.http.routers.whoami.rule=Host(`whoami.{{base_hostname}}`)"
-                - "traefik.http.routers.whoami.entrypoints=websecure"
-                - "traefik.http.routers.whoami.tls=true"
-                - "traefik.http.routers.whoami.tls.certresolver=tlsresolver"
-                - "traefik.http.routers.whoami.tls.domains[0].main={{base_hostname}}"
-                - "traefik.http.routers.whoami.tls.domains[0].sans=*.{{base_hostname}}"
-                - "traefik.http.services.whoami-service.loadbalancer.server.port=80"
+#          whoami:
+#            image: traefik/whoami
+#            networks:
+#              - traefiknet
+#            deploy:
+#              labels:
+#                - "traefik.enable=true"
+#                - "traefik.http.routers.whoami.rule=Host(`whoami.{{base_hostname}}`)"
+#                - "traefik.http.routers.whoami.entrypoints=websecure"
+#                - "traefik.http.routers.whoami.tls=true"
+#                - "traefik.http.routers.whoami.tls.certresolver=tlsresolver"
+#                - "traefik.http.routers.whoami.tls.domains[0].main={{base_hostname}}"
+#                - "traefik.http.routers.whoami.tls.domains[0].sans=*.{{base_hostname}}"
+#                - "traefik.http.services.whoami-service.loadbalancer.server.port=80"
 #          datadog:
 #            image: datadog/agent:7
 #            environment:
@@ -76,4 +76,6 @@
 #              mode: global
         networks:
           traefiknet:
+            external: true
+          appnet:
             external: true
