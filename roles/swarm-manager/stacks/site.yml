@@ -60,6 +60,18 @@
                 - "traefik.http.routers.whoami.tls.domains[0].main=0d.kz"
                 - "traefik.http.routers.whoami.tls.domains[0].sans=*.0d.kz"
                 - "traefik.http.services.whoami-service.loadbalancer.server.port=80"
+          datadog:
+            image: datadog/agent:7
+            environment:
+              DD_API_KEY: "{{ datadog_agent_token }}"
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+              - /proc/:/host/proc/:ro
+              - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+            networks:
+              - traefiknet
+            deploy:
+              mode: global
         networks:
           traefiknet:
             external: true
