@@ -1,0 +1,5 @@
+---
+- name: restart traefik
+  docker_service:
+    name: "{{stack_name}}_traefik"
+    force_update: yes

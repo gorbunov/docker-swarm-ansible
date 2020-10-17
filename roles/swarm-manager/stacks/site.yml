@@ -3,6 +3,8 @@
   template:
     src: traefik.toml.j2
     dest: /srv/traefik.toml
+    notify:
+      - restart traefik
 
 - name: create acme dir storage
   file:
@@ -12,7 +14,7 @@
 
 - name: Deploy core stack
   docker_stack:
-    name: tradebot
+    name: "{{ stack_name }}"
     with_registry_auth: true
     resolve_image: never
     compose:
@@ -37,15 +39,15 @@
                   - "node.role==manager"
               labels:
                 - "traefik.enable=true"
-                - "traefik.http.routers.dashboard.rule=Host(`traefik.0d.kz`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+                - "traefik.http.routers.dashboard.rule=Host(`traefik.{{base_hostname}}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
                 - "traefik.http.routers.dashboard.service=api@internal"
                 - "traefik.http.routers.dashboard.middlewares=auth"
                 - "traefik.http.routers.dashboard.entrypoints=websecure"
                 - "traefik.http.routers.dashboard.tls.certresolver=tlsresolver"
                 - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$MOMEjVtn$$.10ydpv.z80xNBRsmha9S0"
                 - "traefik.http.services.traefik-service.loadbalancer.server.port=9999"
-                - "traefik.http.routers.dashboard.tls.domains[0].main=0d.kz"
-                - "traefik.http.routers.dashboard.tls.domains[0].sans=*.0d.kz"
+                - "traefik.http.routers.dashboard.tls.domains[0].main={{base_hostname}}"
+                - "traefik.http.routers.dashboard.tls.domains[0].sans=*.{{base_hostname}}"
           whoami:
             image: traefik/whoami
             networks:
@@ -53,12 +55,12 @@
             deploy:
               labels:
                 - "traefik.enable=true"
-                - "traefik.http.routers.whoami.rule=Host(`whoami.0d.kz`)"
+                - "traefik.http.routers.whoami.rule=Host(`whoami.{{base_hostname}}`)"
                 - "traefik.http.routers.whoami.entrypoints=websecure"
                 - "traefik.http.routers.whoami.tls=true"
                 - "traefik.http.routers.whoami.tls.certresolver=tlsresolver"
-                - "traefik.http.routers.whoami.tls.domains[0].main=0d.kz"
-                - "traefik.http.routers.whoami.tls.domains[0].sans=*.0d.kz"
+                - "traefik.http.routers.whoami.tls.domains[0].main={{base_hostname}}"
+                - "traefik.http.routers.whoami.tls.domains[0].sans=*.{{base_hostname}}"
                 - "traefik.http.services.whoami-service.loadbalancer.server.port=80"
           datadog:
             image: datadog/agent:7
@@ -66,7 +68,7 @@
               - DD_API_KEY={{ datadog_agent_token }}
               - DD_LOGS_ENABLED=true
               - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
-              - DD_CONTAINER_EXCLUDE="name:tradebot_datadog"
+              - "DD_CONTAINER_EXCLUDE=\"name:{{base_hostname}}_datadog\""
             volumes:
               - /var/run/docker.sock:/var/run/docker.sock
               - /proc/:/host/proc/:ro
